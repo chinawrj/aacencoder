@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 set(CMAKE_SYSTEM_NAME LINUX)
 
 set(TOP_DIR "${CMAKE_SOURCE_DIR}/..")
-set(VOAAC_DIR "${TOP_DIR}/thirdparty/voaac")
+set(VOAAC_DIR "${TOP_DIR}/thirdparty/vo-aac")
 
 # include files
 include_directories(${TOP_DIR})
