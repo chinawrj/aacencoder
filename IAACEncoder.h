@@ -14,10 +14,13 @@
  ** limitations under the License.
  */
 
-#ifndef __IAUDIOENCODER_H
-#define __IAUDIOENCODER_H
+#include "stdio.h"
+#include "stdbool.h"
 
-class IAudioEncoderListener {
+#ifndef __IAACENCODER_H
+#define __IAACENCODER_H
+
+class IAACEncoderListener {
 public:
     /**
      * Listener to save encoded data.
@@ -26,41 +29,39 @@ public:
      * \retval N/A.
      */
     virtual void output(unsigned char *outBuffer, int outLength) = 0;
-    virtual ~IAudioEncoderListener() {}
+    virtual ~IAACEncoderListener() {}
 };
 
-class IAudioEncoder
+class IAACEncoder
 {
 public:
     enum EncoderError {
         ENCODER_NOERROR             =  0,
         ENCODER_ERROR_GENERIC       = -1,
-
         ENCODER_ERROR_BADSAMPLERATE = -10,
         ENCODER_ERROR_BADCHANNELS   = -11,
         ENCODER_ERROR_BADSAMPLEBITS = -12,
         ENCODER_ERROR_BADBITRATE    = -13,
-
-        ENCODER_ERROR_INVALIDARG    = -100,
-        ENCODER_ERROR_NOMEM         = -101,
-        ENCODER_ERROR_NULLPOINTER   = -102,
-
-        ENCODER_ERROR_SMALLINPUT    = -1000,
-        ENCODER_ERROR_SMALLOUTPUT   = -1001,
+        ENCODER_ERROR_INVALIDARG    = -14,
+        ENCODER_ERROR_NOMEM         = -15,
+        ENCODER_ERROR_NULLPOINTER   = -16,
     };
 
-    virtual ~IAudioEncoder() {}
+    virtual ~IAACEncoder() {}
 
     /**
-     * Init audio encoder.
+     * Init aac encoder.
      * \param listener [IN] listener to save encoded data.
      * \param sampleRate [IN] pcm sample rate.
      * \param channels [IN] number of channels on input (1,2).
-     * \param bits [IN] pcm bits per sample. 
-     * \param bitRate [IN] encoder bit rate in bits/sec. 
+     * \param bits [IN] pcm bits per sample.
+     * \param bitRate [IN] encoder bit rate in bits/sec.
+     * \param adtsUsed [IN] whether write adts header. 
      * \retval ENCODER_NOERROR Succeeded. Others Failed.
      */
-    virtual int init(IAudioEncoderListener *listener, int sampleRate, int channels, int bitsPerSample, int bitRate = 0) = 0;
+    virtual int init(IAACEncoderListener *listener,
+                     int sampleRate, int channels, int bitsPerSample,
+                     int bitRate = 0, bool adtsUsed = true) = 0;
 
     /**
      * Feed pcm data.
@@ -71,10 +72,10 @@ public:
     virtual int input(unsigned char *inBuffer, int inLength) = 0;
 
     /**
-     * Uninit audio encoder.
+     * Uninit aac encoder.
      * \retval N/A.
      */
     virtual void deinit() = 0;
 };
 
-#endif // __IAUDIOENCODER_H
+#endif // __IAACENCODER_H

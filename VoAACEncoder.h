@@ -18,23 +18,25 @@
 #define __VOAACENCODER_H
 
 #include "voAAC.h"
-#include "IAudioEncoder.h"
+#include "IAACEncoder.h"
 
-class VoAACEncoder : public IAudioEncoder
+class VoAACEncoder : public IAACEncoder
 {
 public:
     VoAACEncoder();
 
     ~VoAACEncoder();
 
-    int init(IAudioEncoderListener *listener, int sampleRate, int channels, int bitsPerSample, int bitRate = 0);
+    int init(IAACEncoderListener *listener,
+             int sampleRate, int channels, int bitsPerSample,
+             int bitRate = 0, bool adtsUsed = true);
 
     int input(unsigned char *inBuffer, int inLength);
 
     void deinit();
 
 private:
-    IAudioEncoderListener *mListener;
+    IAACEncoderListener   *mListener;
     VO_AUDIO_CODECAPI      mCodecApi;
     VO_MEM_OPERATOR        mCodecMem;
     VO_HANDLE              mCodecHandle;
@@ -42,7 +44,7 @@ private:
     VO_CODECBUFFER         mInBuffer;
     int                    mBytesRemain;
     int                    mBytesFrame;
-    int getPreferredBitRate(int sampleRate, int channels);
+    int preferredBitRate(int sampleRate, int channels);
 };
 
 #endif // __VOAACENCODER_H

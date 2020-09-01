@@ -48,13 +48,17 @@ VoAACEncoder::VoAACEncoder()
 
 VoAACEncoder::~VoAACEncoder()
 {
+    if (mCodecHandle != NULL)
+        mCodecApi.Uninit(mCodecHandle);
     if (mOutBuffer.Buffer != NULL)
         free(mOutBuffer.Buffer);
     if (mInBuffer.Buffer != NULL)
         free(mInBuffer.Buffer);
 }
 
-int VoAACEncoder::init(IAudioEncoderListener *listener, int sampleRate, int channels, int bitsPerSample, int bitRate)
+int VoAACEncoder::init(IAACEncoderListener *listener,
+                       int sampleRate, int channels, int bitsPerSample,
+                       int bitRate, bool adtsUsed)
 {
     if (mOutBuffer.Buffer == NULL || mInBuffer.Buffer == NULL) {
         pr_err("Invalid in/out buffer\n");
@@ -67,7 +71,7 @@ int VoAACEncoder::init(IAudioEncoderListener *listener, int sampleRate, int chan
     }
 
     if (channels != 1 && channels != 2) {
-        pr_err("Unsupported pcm channels %d\n", channels);
+        pr_err("Unsupported channel count %d\n", channels);
         return ENCODER_ERROR_BADCHANNELS;
     }
 
@@ -78,7 +82,7 @@ int VoAACEncoder::init(IAudioEncoderListener *listener, int sampleRate, int chan
     }
 
     if (bitRate == 0)
-        bitRate = getPreferredBitRate(sampleRate, channels);
+        bitRate = preferredBitRate(sampleRate, channels);
     // notice that:
     // bitRate/nChannels > 8000
     // bitRate/nChannels < 160000
@@ -100,9 +104,11 @@ int VoAACEncoder::init(IAudioEncoderListener *listener, int sampleRate, int chan
     params.sampleRate = sampleRate;
     params.bitRate = bitRate;
     params.nChannels = channels;
-    params.adtsUsed = 1;
+    params.adtsUsed = adtsUsed ? 1 : 0;
     if (mCodecApi.SetParam(mCodecHandle, VO_PID_AAC_ENCPARAM, &params) != VO_ERR_NONE) {
         pr_err("Unable to set aac encoder parameters\n");
+        mCodecApi.Uninit(mCodecHandle);
+        mCodecHandle = NULL;
         return ENCODER_ERROR_GENERIC;
     }
 
@@ -191,10 +197,34 @@ void VoAACEncoder::deinit()
     }
 }
 
-int VoAACEncoder::getPreferredBitRate(int sampleRate, int channels)
+int VoAACEncoder::preferredBitRate(int sampleRate, int channels)
 {
-    int scale = 441;
-    if (sampleRate%8000 == 0)
-        scale = 480;
-    return 640*channels*sampleRate/scale;
+    int bitRate = -1;
+    switch (sampleRate) {
+    case 8000:
+    case 11025:
+    case 12000:
+        bitRate = 20000; // 20kbps
+        break;
+    case 16000:
+    case 22050:
+    case 24000:
+        bitRate = 32000; // 32kbps
+        break;
+    case 32000:
+        bitRate = 48000; // 48kbps
+        break;
+    case 44100:
+    case 48000:
+        bitRate = 96000; // 96kbps
+        break;
+    case 64000:
+    case 88200:
+    case 96000:
+        bitRate = 128000; // 128kbps
+        break;
+    default:
+        return -1; // return -1 for unsupported sampling rates
+    }
+    return bitRate*channels;
 }

@@ -18,11 +18,11 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include "IAudioEncoder.h"
+#include "IAACEncoder.h"
 #include "VoAACEncoder.h"
 #include "wavreader.h"
 
-class AACEncoderOutput : public IAudioEncoderListener
+class AACEncoderOutput : public IAACEncoderListener
 {
 public:
     AACEncoderOutput(FILE *file) : mFile(file) {}
@@ -83,9 +83,9 @@ int main(int argc, char *argv[])
 
     int ret = 0;
     AACEncoderOutput *output = new AACEncoderOutput(out);
-    IAudioEncoder *encoder = new VoAACEncoder();
+    IAACEncoder *encoder = new VoAACEncoder();
     ret = encoder->init(output, sampleRate, channels, bitsPerSample);
-    if (ret != IAudioEncoder::ENCODER_NOERROR) {
+    if (ret != IAACEncoder::ENCODER_NOERROR) {
         fprintf(stderr, "Unable to init encoder, error=%d\n", ret);
         return 1;
     }
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
         if (inLength <= 0)
             break;
         ret = encoder->input(inputBuf, inLength);
-        if (ret != IAudioEncoder::ENCODER_NOERROR) {
+        if (ret != IAACEncoder::ENCODER_NOERROR) {
             fprintf(stderr, "Unable to encode data, error=%d\n", ret);
             return 1;
         }
