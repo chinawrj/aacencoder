@@ -19,7 +19,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include "IAACEncoder.h"
-#include "VoAACEncoder.h"
+#include "FdkAACEncoder.h"
 #include "wavreader.h"
 
 class AACEncoderOutput : public IAACEncoderListener
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 
     int ret = 0;
     AACEncoderOutput *output = new AACEncoderOutput(out);
-    IAACEncoder *encoder = new VoAACEncoder();
+    IAACEncoder *encoder = new FdkAACEncoder();
     ret = encoder->init(output, sampleRate, channels, bitsPerSample);
     if (ret != IAACEncoder::ENCODER_NOERROR) {
         fprintf(stderr, "Unable to init encoder, error=%d\n", ret);
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
     }
 
     encoder->deinit();
-    delete (VoAACEncoder *)encoder;
+    delete (FdkAACEncoder *)encoder;
 
     free(inputBuf);
     fclose(out);

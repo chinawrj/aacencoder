@@ -1,10 +1,7 @@
 LOCAL_PATH := $(call my-dir)
-
 include $(CLEAR_VARS)
-
 TOP_DIR := ${LOCAL_PATH}/../..
 VOAAC_DIR := ${TOP_DIR}/thirdparty/vo-aac
-
 LOCAL_SRC_FILES := \
     ${VOAAC_DIR}/common/cmnMemory.c \
     ${VOAAC_DIR}/aacenc/basic_op/basicop2.c \
@@ -36,13 +33,35 @@ LOCAL_SRC_FILES := \
     ${VOAAC_DIR}/aacenc/src/transform.c \
     ${VOAAC_DIR}/aacenc/src/memalign.c \
     ${TOP_DIR}/VoAACEncoder.cpp
-
 LOCAL_C_INCLUDES += ${TOP_DIR} ${VOAAC_DIR}/include
-
 LOCAL_CFLAGS += -Wall -Werror
-
 LOCAL_LDLIBS := -llog
-
 LOCAL_MODULE := libvoaacencoder
+include $(BUILD_SHARED_LIBRARY)
 
+include $(CLEAR_VARS)
+TOP_DIR := ${LOCAL_PATH}/../..
+FDKAAC_DIR := ${TOP_DIR}/thirdparty/fdk-aac
+FDKAAC_SRC_LIST := $(wildcard ${FDKAAC_DIR}/libAACenc/src/*.cpp)
+FDKAAC_SRC_LIST += $(wildcard ${FDKAAC_DIR}/libArithCoding/src/*.cpp)
+FDKAAC_SRC_LIST += $(wildcard ${FDKAAC_DIR}/libFDK/src/*.cpp)
+FDKAAC_SRC_LIST += $(wildcard ${FDKAAC_DIR}/libMpegTPEnc/src/*.cpp)
+FDKAAC_SRC_LIST += $(wildcard ${FDKAAC_DIR}/libPCMutils/src/*.cpp)
+FDKAAC_SRC_LIST += $(wildcard ${FDKAAC_DIR}/libSACenc/src/*.cpp)
+FDKAAC_SRC_LIST += $(wildcard ${FDKAAC_DIR}/libSBRenc/src/*.cpp)
+FDKAAC_SRC_LIST += $(wildcard ${FDKAAC_DIR}/libSYS/src/*.cpp)
+LOCAL_SRC_FILES := $(FDKAAC_SRC_LIST) ${TOP_DIR}/FdkAACEncoder.cpp
+LOCAL_C_INCLUDES += \
+    ${TOP_DIR} \
+    ${FDKAAC_DIR}/libAACenc/include \
+    ${FDKAAC_DIR}/libArithCoding/include \
+    ${FDKAAC_DIR}/libFDK/include \
+    ${FDKAAC_DIR}/libMpegTPEnc/include \
+    ${FDKAAC_DIR}/libPCMutils/include \
+    ${FDKAAC_DIR}/libSACenc/include \
+    ${FDKAAC_DIR}/libSBRenc/include \
+    ${FDKAAC_DIR}/libSYS/include
+LOCAL_CFLAGS += -Wall -Werror
+LOCAL_LDLIBS := -llog
+LOCAL_MODULE := libfdkaacencoder
 include $(BUILD_SHARED_LIBRARY)

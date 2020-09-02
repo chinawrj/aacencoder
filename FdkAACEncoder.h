@@ -14,18 +14,18 @@
  ** limitations under the License.
  */
 
-#ifndef __VOAACENCODER_H
-#define __VOAACENCODER_H
+#ifndef __FDKAACENCODER_H
+#define __FDKAACENCODER_H
 
-#include "voAAC.h"
+#include "aacenc_lib.h"
 #include "IAACEncoder.h"
 
-class VoAACEncoder : public IAACEncoder
+class FdkAACEncoder : public IAACEncoder
 {
 public:
-    VoAACEncoder();
+    FdkAACEncoder();
 
-    ~VoAACEncoder();
+    ~FdkAACEncoder();
 
     int init(IAACEncoderListener *listener,
              int sampleRate, int channels, int bitsPerSample,
@@ -36,15 +36,18 @@ public:
     void deinit();
 
 private:
+    typedef struct {
+        unsigned char     *buffer;     /*!< Buffer pointer */
+        unsigned int       length;     /*!< Buffer size in byte */
+    } AACENC_BUFFER;
+
     IAACEncoderListener   *mListener;
-    VO_AUDIO_CODECAPI      mCodecApi;
-    VO_MEM_OPERATOR        mCodecMem;
-    VO_HANDLE              mCodecHandle;
-    VO_CODECBUFFER         mOutBuffer;
-    VO_CODECBUFFER         mInBuffer;
+    HANDLE_AACENCODER      mCodecHandle;
+    AACENC_BUFFER          mOutBuffer;
+    AACENC_BUFFER          mInBuffer;
     int                    mBytesRemain;
     int                    mBytesFrame;
     int preferredBitRate(int sampleRate, int channels);
 };
 
-#endif // __VOAACENCODER_H
+#endif // __FDKAACENCODER_H

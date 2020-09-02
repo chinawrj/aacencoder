@@ -1,13 +1,24 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.4.1)
+
+project(AACEncoder_main)
 
 set(CMAKE_SYSTEM_NAME LINUX)
 
 set(TOP_DIR "${CMAKE_SOURCE_DIR}/..")
 set(VOAAC_DIR "${TOP_DIR}/thirdparty/vo-aac")
+set(FDKAAC_DIR "${TOP_DIR}/thirdparty/fdk-aac")
 
 # include files
 include_directories(${TOP_DIR})
 include_directories(${VOAAC_DIR}/include)
+include_directories(${FDKAAC_DIR}/libAACenc/include)
+include_directories(${FDKAAC_DIR}/libArithCoding/include)
+include_directories(${FDKAAC_DIR}/libFDK/include)
+include_directories(${FDKAAC_DIR}/libMpegTPEnc/include)
+include_directories(${FDKAAC_DIR}/libPCMutils/include)
+include_directories(${FDKAAC_DIR}/libSACenc/include)
+include_directories(${FDKAAC_DIR}/libSBRenc/include)
+include_directories(${FDKAAC_DIR}/libSYS/include)
 
 # VOAAC_SRC source files
 set (VOAAC_SRC
@@ -42,6 +53,18 @@ set (VOAAC_SRC
     ${VOAAC_DIR}/aacenc/src/memalign.c
 )
 
+# FDKAAC_SRC source files
+file(GLOB FDK_SRC src
+    ${FDKAAC_DIR}/libAACenc/src/*.cpp
+    ${FDKAAC_DIR}/libArithCoding/src/*.cpp
+    ${FDKAAC_DIR}/libFDK/src/*.cpp
+    ${FDKAAC_DIR}/libMpegTPEnc/src/*.cpp
+    ${FDKAAC_DIR}/libPCMutils/src/*.cpp
+    ${FDKAAC_DIR}/libSACenc/src/*.cpp
+    ${FDKAAC_DIR}/libSBRenc/src/*.cpp
+    ${FDKAAC_DIR}/libSYS/src/*.cpp
+)
+
 # cflags
 set(CMAKE_C_FLAGS   "-Wall -Werror")
 set(CMAKE_CXX_FLAGS "-Wall -Werror")
@@ -52,4 +75,12 @@ add_executable(VoAACEncoder_main
     ${VOAAC_SRC}
     ${CMAKE_SOURCE_DIR}/wavreader.c
     ${CMAKE_SOURCE_DIR}/VoAACEncoder_main.cpp
+)
+
+# FdkAACEncoder_main bin
+add_executable(FdkAACEncoder_main
+    ${TOP_DIR}/FdkAACEncoder.cpp
+    ${FDK_SRC}
+    ${CMAKE_SOURCE_DIR}/wavreader.c
+    ${CMAKE_SOURCE_DIR}/FdkAACEncoder_main.cpp
 )

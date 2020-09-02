@@ -45,6 +45,7 @@ public:
         ENCODER_ERROR_INVALIDARG    = -14,
         ENCODER_ERROR_NOMEM         = -15,
         ENCODER_ERROR_NULLPOINTER   = -16,
+        ENCODER_ERROR_EOF           = -17,
     };
 
     virtual ~IAACEncoder() {}
@@ -69,7 +70,7 @@ public:
      * \param inLength [IN] input buffer length in byte.
      * \retval ENCODER_NOERROR Succeeded. Others Failed.
      */
-    virtual int input(unsigned char *inBuffer, int inLength) = 0;
+    virtual int encode(unsigned char *inBuffer, int inLength) = 0;
 
     /**
      * Uninit aac encoder.

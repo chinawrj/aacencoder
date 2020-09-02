@@ -117,7 +117,7 @@ int VoAACEncoder::init(IAACEncoderListener *listener,
     return ENCODER_NOERROR;
 }
 
-int VoAACEncoder::input(unsigned char *inBuffer, int inLength)
+int VoAACEncoder::encode(unsigned char *inBuffer, int inLength)
 {
     if ((VO_U32)inLength > mOutBuffer.Length) {
         VO_U32 newLength = (inLength/mOutBuffer.Length + 1) * mOutBuffer.Length;
