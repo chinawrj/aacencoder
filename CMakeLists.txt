@@ -43,7 +43,7 @@ set (VOAAC_SRC
 )
 
 # cflags
-set(CMAKE_C_FLAGS   "-DHAVE_STDINT_H -DSTDC_HEADERS -Wall -Werror")
+set(CMAKE_C_FLAGS   "-Wall -Werror")
 set(CMAKE_CXX_FLAGS "-Wall -Werror")
 
 # libaudioencoder
